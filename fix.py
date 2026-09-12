@@ -1,0 +1,12 @@
+from pathlib import Path
+p=Path('src/verification.js')
+s=p.read_text(encoding='utf-8-sig').replace("import { fixture }", "import { fixture, candidates }")
+s=s.replace("const status = /\\[error\\]/i.test(text)", "const selected = candidates.find(item => item.title === text);\n    const status = selected ? 'verified' : /\\[error\\]/i.test(text)")
+s=s.replace("return normalizeVerification(fixture(status, text), text, true);", "const data = fixture(status, text);\n    if (selected) Object.assign(data, { explanation_text: selected.explanation, news_date: selected.news_date, sources: [{ name: selected.source_name, url: selected.source_url, tier: 'official' }], similar_news: [] });\n    return normalizeVerification(data, text, true);")
+p.write_text(s,encoding='utf-8')
+p=Path('src/main.js');s=p.read_text(encoding='utf-8-sig')
+s=s.replace("<b>G</b> إنشاء حساب باستخدام Google", "${icon('google')} إنشاء حساب باستخدام Google")
+s=s.replace("if(item){button.disabled=true;", "if(item?.report){result=item.report;storage.set('saber:result',result);navigate('/result');return;}if(item){button.disabled=true;")
+s=s.replace("match_score:r.confidenceScore});", "match_score:r.confidenceScore,report:r});")
+s=s.replace("if (location.hash) requestAnimationFrame(()=>document.querySelector(location.hash)?.scrollIntoView());", "if (location.hash) requestAnimationFrame(()=>document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView());")
+p.write_text(s,encoding='utf-8')
